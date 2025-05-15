@@ -1,6 +1,7 @@
-#include <iostream>
+#include "interpreter.h"
 
 int main(int argc, char* argv[]) {
-    std::cout << "it brainfuckin time" << std::endl;
+    Interpreter interpreter("++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.");
+    interpreter.run();
     return 0;
 }
