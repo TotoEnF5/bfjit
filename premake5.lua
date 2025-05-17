@@ -5,6 +5,8 @@ project "bfjit"
     language "C++"
     kind "ConsoleApp"
 
+    links { "lightning" }
+
     files {
 	"src/**.cpp",
 	"include/**.h",
