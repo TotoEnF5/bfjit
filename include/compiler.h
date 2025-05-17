@@ -18,6 +18,12 @@ public:
     CompiledFunction compile(const std::string& code);
 
 private:
+    void incrementCellPointer();
+    void decrementCellPointer();
+    void incrementCell();
+    void decrementCell();
+
+private:
     jit_state_t* state;
 };
 

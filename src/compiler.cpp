@@ -16,11 +16,44 @@ Compiler::~Compiler() {
 CompiledFunction Compiler::compile(const std::string& code) {
     jit_prolog();
 
-    // compile stuff
+    for (char operation : code) {
+	switch (operation) {
+	case '<':
+	    this->decrementCellPointer();
+	    break;
+
+	case '>':
+	    this->incrementCellPointer();
+	    break;
+
+	case '+':
+	    this->incrementCell();
+	    break;
+
+	case '-':
+	    this->decrementCell();
+	    break;
+	}
+    }
     
     jit_ret();
     CompiledFunction func = (CompiledFunction)jit_emit();
     jit_clear_state();
 
     return func;
+}
+
+void incrementCellPointer() {
+
+}
+
+void decrementCellPointer() {
+
+}
+
+void incrementCell() {
+
+}
+
+void decrementCell() {
 }
