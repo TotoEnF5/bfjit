@@ -3,6 +3,13 @@
 #include <lightning/jit_x86.h>
 #include <stdio.h>
 
+/**
+ * Lightning manages only one of its states at a time for some reason.
+ * This state must be called _jit (see https://www.gnu.org/software/lightning/manual/lightning.html#incr)
+ * I tried using the same state to compile multiple functions, but it never did what I wanted it to do.
+ * My solution is simply to have a vector of states and create a new state for each function we compile.
+ * The is probably overkill but it works :)
+ */
 #define _jit this->states[this->currentState]
 
 Compiler::Compiler(const uint8_t* memory)

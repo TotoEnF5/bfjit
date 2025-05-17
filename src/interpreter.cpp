@@ -38,14 +38,20 @@ void Interpreter::run() {
 		this->gotoMatchingLoopEnd();
 	    }
 	    else {
+		// If the loop is in the cache, run the function.
+		// If not, pass the loop in the analyzer.
 		if (this->cache.isInCache(this->programCounter)) {
 		    CompiledFunction func = this->cache.getFunction(this->programCounter);
 		    this->cellPointer = func(this->cellPointer);
 
+		    // Interpreter::gotoMatchingLoopEnd goes directly on the matching ],
+		    // but we want to go one instruction behind it so we interpret the ].
 		    this->gotoMatchingLoopEnd();
 		    this->programCounter--;
 		}
 		else if (this->analyzer.analyzeLoop(this->programCounter)) {
+		    // The analyzer has decided it's time to compile this loop!
+
 		    uint16_t oldCounter = this->programCounter;
 		    this->gotoMatchingLoopEnd();
 		    uint16_t matchingEnd = this->programCounter;
@@ -56,10 +62,13 @@ void Interpreter::run() {
 		    this->cache.addFunction(this->programCounter, func);
 
 		    this->cellPointer = func(this->cellPointer);
+		    // Interpreter::gotoMatchingLoopEnd goes directly on the matching ],
+		    // but we want to go one instruction behind it so we interpret the ].
 		    this->programCounter = matchingEnd - 1;
 	    	}
 		else {
-		    // do nothing
+		    // we don't need to do anything in particular here.
+		    // just let the interpreter do its thing :)
 		}
 	    }
 	    break;

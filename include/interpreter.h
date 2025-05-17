@@ -8,15 +8,36 @@
 #include <cstdint>
 #include <string>
 
+/**
+ * The interpreter.
+ */
 class Interpreter {
 public:
+    /**
+     * Initializes the memory and everything.
+     * Pass in the brainfuck code you want to interpret.
+     */
     Interpreter(const std::string& code);
 
+    /**
+     * Run the brainfuck program!
+     */
     void run();
+
+    /**
+     * Dumps the contents of the memory to stdout.
+     */
     void dumpMemory();
 
 private:
+    /**
+     * Moves the program counter to the matching ].
+     */
     void gotoMatchingLoopEnd();
+
+    /**
+     * Moves the program counter to the matching [.
+     */
     void gotoMatchingLoopBegin();
 
 private:
