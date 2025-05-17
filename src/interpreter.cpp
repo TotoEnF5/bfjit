@@ -4,7 +4,7 @@
 #include <string>
 
 Interpreter::Interpreter(const std::string& code)
-    : code(code)
+    : analyzer(3), code(code)
 {
     for (uint16_t i = 0; i < 0xFFFF; i++) {
 	this->memory[i] = 0;
@@ -14,6 +14,15 @@ Interpreter::Interpreter(const std::string& code)
 void Interpreter::run() {
     while (this->programCounter < this->code.length()) {
 	char operation = this->code.at(this->programCounter);
+
+	if (this->programCounter > 0 && this->code.at(this->programCounter - 1) == '[') {
+	    // ask the analyzer if we need to compile
+	    // if we do, check in the cache if we have already compiled to loop
+	    // if we did, call the compiled function
+	    // if not, compile the loop, add it to the cache and call it
+	    // if we dont need to compile, do nothing
+	    std::cout << this->programCounter << ": " << this->analyzer.analyzeLoop(this->programCounter - 1) << std::endl;
+	}
 
 	switch (operation) {
 	case '<':

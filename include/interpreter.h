@@ -1,6 +1,7 @@
 #ifndef INTERPRETER_H_
 #define INTERPRETER_H_
 
+#include "analyzer.h"
 #include <array>
 #include <cstddef>
 #include <cstdint>
@@ -23,6 +24,7 @@ private:
     void jumpBefore();
 
 private:
+    Analyzer analyzer;
     std::string code;
     std::array<uint16_t, 0x10000> memory;
     uint16_t cellCounter = 0;
