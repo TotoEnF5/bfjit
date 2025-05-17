@@ -18,6 +18,7 @@ int main(int argc, char* argv[]) {
 
     Interpreter interpreter(sstr.str());
     interpreter.run();
+    // interpreter.dumpMemory();
 
     /*
     uint8_t memory[0x10000] = { 0 };

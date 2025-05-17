@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <string>
+#include <vector>
 
 extern "C" {
 #include <lightning.h>
@@ -81,7 +82,8 @@ private:
     void jumpBackwards();
 
 private:
-    jit_state_t* state;
+    std::vector<jit_state_t*> states;
+    uint32_t currentState = 0;
     const uint8_t* memory;
 
     jit_node_t* forwardLabels[1024] = { nullptr };

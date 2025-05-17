@@ -3,21 +3,26 @@
 #include <lightning/jit_x86.h>
 #include <stdio.h>
 
-#define _jit this->state
+#define _jit this->states[this->currentState]
 
 Compiler::Compiler(const uint8_t* memory)
     : memory(memory)
 {
     init_jit(nullptr);
-    this->state = jit_new_state();
 }
 
 Compiler::~Compiler() {
-    jit_destroy_state();
+    for (uint32_t i = 0; i < this->states.size(); i++) {
+	this->currentState = i;
+	jit_destroy_state();
+    }
+
     finish_jit();
 }
 
 CompiledFunction Compiler::compile(const std::string& code) {
+    this->states.push_back(jit_new_state());
+
     this->previousInstruction = code.at(0);
 
     this->beginCompilation();
@@ -62,8 +67,11 @@ CompiledFunction Compiler::compile(const std::string& code) {
 	    break;
 	}
     }
+
+    this->applyState();
     
     CompiledFunction func = this->endCompilation();
+    this->currentState++;
     return func;
 }
 
