@@ -8,7 +8,7 @@ extern "C" {
 #include <lightning.h>
 }
 
-using CompiledFunction = void(*)(uint16_t cellPointer);
+using CompiledFunction = uint16_t(*)(uint16_t cellPointer);
 
 class Compiler {
 public:
@@ -18,6 +18,9 @@ public:
     CompiledFunction compile(const std::string& code);
 
 private:
+    /**
+     * Loads the value of the current cell into V2.
+     */
     void loadCellValue();
     void applyState();
     void output();

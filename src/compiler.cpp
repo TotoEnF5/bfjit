@@ -71,7 +71,7 @@ CompiledFunction Compiler::compile(const std::string& code) {
 	}
     }
     
-    jit_ret();
+    jit_retr(JIT_V1);
     CompiledFunction func = (CompiledFunction)jit_emit();
     jit_clear_state();
 
