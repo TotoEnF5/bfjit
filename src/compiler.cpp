@@ -20,15 +20,7 @@ Compiler::~Compiler() {
 CompiledFunction Compiler::compile(const std::string& code) {
     this->previousInstruction = code.at(0);
 
-    jit_prolog();
-
-    // V0 = memory address
-    jit_movi(JIT_V0, (jit_word_t)this->memory);
-    // V1 = cell pointer, passed as argument to the function
-    // calculate the offset in bytes, and store it in V1
-    jit_node_t* arg = jit_arg();
-    jit_getarg(JIT_V1, arg);
-    // jit_muli(JIT_V1, JIT_V1, sizeof(uint8_t));
+    this->beginCompilation();
 
     for (char instruction : code) {
 	if (this->previousInstruction != instruction) {
@@ -71,12 +63,24 @@ CompiledFunction Compiler::compile(const std::string& code) {
 	}
     }
     
+    CompiledFunction func = this->endCompilation();
+    return func;
+}
+
+void Compiler::beginCompilation() {
+    jit_prolog();
+
+    // V0 = memory address
+    jit_movi(JIT_V0, (jit_word_t)this->memory);
+    // V1 = cell pointer, passed as argument to the function
+    jit_node_t* arg = jit_arg();
+    jit_getarg(JIT_V1, arg);
+}
+
+CompiledFunction Compiler::endCompilation() {
     jit_retr(JIT_V1);
     CompiledFunction func = (CompiledFunction)jit_emit();
     jit_clear_state();
-
-    // jit_disassemble();
-
     return func;
 }
 
@@ -102,7 +106,7 @@ void Compiler::applyState() {
     // cell value state
     if (this->cellValueState > 0) {
 	this->loadCellValue();
-	jit_addi(JIT_V2, JIT_V2, this->cellValueState/* * sizeof(uint8_t)*/);
+	jit_addi(JIT_V2, JIT_V2, this->cellValueState);
 	jit_stxr_c(JIT_V0, JIT_V1, JIT_V2);
 	this->cellValueState = 0;
     }
@@ -111,7 +115,7 @@ void Compiler::applyState() {
 	// but since the state is negative, we need to negate it or we subtract by something stupid like 0xFFFFFFFFF
 	// (the representation of a negative number in binary)
 	this->loadCellValue();
-	jit_subi(JIT_V2, JIT_V2, -this->cellValueState/* * sizeof(uint8_t)*/);
+	jit_subi(JIT_V2, JIT_V2, -this->cellValueState);
 	jit_stxr_c(JIT_V0, JIT_V1, JIT_V2);
 	this->cellValueState = 0;
     }
@@ -120,6 +124,7 @@ void Compiler::applyState() {
 void Compiler::output() {
     this->loadCellValue();
 
+    // see https://www.gnu.org/software/lightning/manual/html_node/printf.html
     jit_prepare();
     jit_pushargr_c(JIT_V2);
     jit_finishi((jit_pointer_t)putchar);
@@ -131,8 +136,9 @@ void Compiler::input() {
 void Compiler::jumpForwards() {
     this->loadCellValue();
 
+    // see www.gnu.org/software/lightning/manual/html_node/The-instruction-set.html, "Labels" section
     jit_node_t* forward = jit_forward();
-    jit_node_t* jump = jit_beqi(JIT_V2, 0); // if V2 == 0, jmp to ]
+    jit_node_t* jump = jit_beqi(JIT_V2, 0); // if V2 == 0, jmp to corresponding ]
     jit_patch_at(jump, forward);
 
     jit_node_t* label = jit_label(); // label to jump to for the corresponding ]
@@ -148,6 +154,7 @@ void Compiler::jumpBackwards() {
 
     this->currentLoop--;
 
+    // see www.gnu.org/software/lightning/manual/html_node/The-instruction-set.html, "Labels" section
     jit_node_t* backward = jit_bnei(JIT_V2, 0); // if V2 != 0, jmp to [
     jit_patch_at(backward, this->backwardLabels[this->currentLoop]);
     
