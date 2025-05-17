@@ -20,6 +20,8 @@ public:
 private:
     void loadCellValue();
     void applyState();
+    void output();
+    void input();
 
 private:
     jit_state_t* state;

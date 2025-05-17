@@ -1,6 +1,7 @@
 #include <compiler.h>
 #include <lightning.h>
 #include <lightning/jit_x86.h>
+#include <stdio.h>
 
 #define _jit this->state
 
@@ -51,6 +52,14 @@ CompiledFunction Compiler::compile(const std::string& code) {
 	case '-':
 	    this->cellValueState--;
 	    break;
+
+	case '.':
+	    this->output();
+	    break;
+
+	case ',':
+	    this->input();
+	    break;
 	}
     }
     
@@ -90,4 +99,15 @@ void Compiler::applyState() {
 	jit_stxr(JIT_V0, JIT_V1, JIT_V2);
 	this->cellValueState = 0;
     }
+}
+
+void Compiler::output() {
+    this->loadCellValue();
+
+    jit_prepare();
+    jit_pushargr_c(JIT_V2);
+    jit_finishi((jit_pointer_t)putchar);
+}
+
+void Compiler::input() {
 }
