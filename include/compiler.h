@@ -22,10 +22,16 @@ private:
     void applyState();
     void output();
     void input();
+    void jumpForwards();
+    void jumpBackwards();
 
 private:
     jit_state_t* state;
     const uint8_t* memory;
+
+    jit_node_t* forwardLabels[1024] = { nullptr };
+    jit_node_t* backwardLabels[1024] = { nullptr };
+    uint32_t currentLoop = 0;
 
     int32_t cellPointerState = 0;
     int32_t cellValueState = 0;
