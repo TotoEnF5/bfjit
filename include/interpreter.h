@@ -17,7 +17,7 @@ public:
      * Initializes the memory and everything.
      * Pass in the brainfuck code you want to interpret.
      */
-    Interpreter(const std::string& code);
+    Interpreter(const std::string& code, bool compile = true);
 
     /**
      * Run the brainfuck program!
@@ -48,6 +48,7 @@ private:
     Cache cache;
     Compiler compiler;
 
+    bool compile;
     size_t programCounter = 0;
     uint16_t cellPointer = 0;
 };

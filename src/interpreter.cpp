@@ -5,8 +5,8 @@
 #include <stdexcept>
 #include <string>
 
-Interpreter::Interpreter(const std::string& code)
-    : code(code), analyzer(3), compiler(this->memory.data())
+Interpreter::Interpreter(const std::string& code, bool compile)
+    : code(code), analyzer(3), compiler(this->memory.data()), compile(compile)
 {}
 
 void Interpreter::run() {
@@ -37,7 +37,7 @@ void Interpreter::run() {
 	    if (this->memory.at(this->cellPointer) == 0) {
 		this->gotoMatchingLoopEnd();
 	    }
-	    else {
+	    else if (this->compile) {
 		// If the loop is in the cache, run the function.
 		// If not, pass the loop in the analyzer.
 		if (this->cache.isInCache(this->programCounter)) {

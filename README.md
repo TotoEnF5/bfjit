@@ -18,3 +18,13 @@ make
 ```
 
 The binaries will be located in `bin/debug`.
+
+## Performance on my machine
+
+On `bf/mandelbrot.bf`:
+
+- With `--compiled`: 1.004s
+- With `--interpreted` (no JIT): 833.15s
+- With out options (JIT enabled): 673.13s
+
+Not the performance I hoped for, but hey it's *a bit* faster at least.
