@@ -8,8 +8,8 @@ project "bfjit"
     links { "lightning" }
 
     files {
-	"src/**.cpp",
-	"include/**.h",
+        "src/**.cpp",
+        "include/**.h",
     }
 
     includedirs { "include" }
