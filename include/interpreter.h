@@ -6,6 +6,7 @@
 #include "compiler.h"
 #include <array>
 #include <cstdint>
+#include <map>
 #include <string>
 
 /**
@@ -51,6 +52,9 @@ private:
     bool compile;
     size_t programCounter = 0;
     uint16_t cellPointer = 0;
+
+    std::map<size_t, size_t> loopBeginEnds;
+    std::map<size_t, size_t> loopEndBegins;
 };
 
 #endif

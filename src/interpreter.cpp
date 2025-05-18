@@ -96,7 +96,12 @@ void Interpreter::dumpMemory() {
 }
 
 void Interpreter::gotoMatchingLoopEnd() {
-	uint16_t baseCounter = this->programCounter;
+	if (this->loopBeginEnds.find(this->programCounter) != this->loopBeginEnds.end()) {
+		this->programCounter = this->loopBeginEnds[this->programCounter];
+		return;
+	}
+
+	size_t baseCounter = this->programCounter;
 	uint32_t numLoops = 0;
 	
 	this->programCounter++;
@@ -107,6 +112,8 @@ void Interpreter::gotoMatchingLoopEnd() {
 		}
 		else if (instruction == ']') {
 			if (numLoops == 0) {
+				this->loopBeginEnds[baseCounter] = this->programCounter;
+                this->loopEndBegins[this->programCounter] = baseCounter;
 				return;
 			}
 			
@@ -120,6 +127,11 @@ void Interpreter::gotoMatchingLoopEnd() {
 }
 
 void Interpreter::gotoMatchingLoopBegin() {
+	if (this->loopBeginEnds.find(this->programCounter) != this->loopBeginEnds.end()) {
+		this->programCounter = this->loopEndBegins[this->programCounter];
+		return;
+	}
+
 	uint16_t baseCounter = this->programCounter;
 	uint32_t numLoops = 0;
 	
@@ -131,6 +143,8 @@ void Interpreter::gotoMatchingLoopBegin() {
 		}
 		else if (instruction == '[') {
 			if (numLoops == 0) {
+                this->loopEndBegins[baseCounter] = this->programCounter;
+                this->loopBeginEnds[this->programCounter] = baseCounter;
 				return;
 			}
 			
